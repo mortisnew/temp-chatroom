@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>ChatRoom</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            min-height: 100vh;
+            font-family:
+                Inter,
+                system-ui,
+                -apple-system,
+                BlinkMacSystemFont,
+                "Segoe UI",
+                sans-serif;
+
+            background:
+                radial-gradient(
+                    circle at 20% 20%,
+                    rgba(99, 102, 241, 0.16),
+                    transparent 35%
+                ),
+                radial-gradient(
+                    circle at 80% 80%,
+                    rgba(139, 92, 246, 0.12),
+                    transparent 35%
+                ),
+                #08090d;
+
+            color: #f5f5f5;
+
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* =========================
+           NAVBAR
+        ========================= */
+
+        .navbar {
+            width: 100%;
+            padding: 24px 6%;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo {
+            font-size: 22px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        .logo span {
+            color: #8b5cf6;
+        }
+
+        .nav-link {
+            color: #a1a1aa;
+            text-decoration: none;
+            font-size: 14px;
+
+            transition: color 0.2s ease;
+        }
+
+        .nav-link:hover {
+            color: #ffffff;
+        }
+
+        /* =========================
+           HERO
+        ========================= */
+
+        .hero {
+            flex: 1;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            padding: 60px 20px 100px;
+        }
+
+        .hero-content {
+            width: 100%;
+            max-width: 650px;
+            text-align: center;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+
+            padding: 7px 13px;
+
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 999px;
+
+            background: rgba(255,255,255,0.035);
+
+            color: #a1a1aa;
+            font-size: 12px;
+
+            margin-bottom: 24px;
+        }
+
+        .badge-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+
+            background: #22c55e;
+
+            box-shadow:
+                0 0 10px rgba(34,197,94,0.6);
+        }
+
+        h1 {
+            font-size: clamp(42px, 7vw, 76px);
+            line-height: 0.98;
+            letter-spacing: -4px;
+            font-weight: 800;
+
+            margin-bottom: 24px;
+        }
+
+        h1 span {
+            color: #8b5cf6;
+        }
+
+        .subtitle {
+            max-width: 520px;
+            margin: 0 auto 42px;
+
+            color: #a1a1aa;
+            font-size: 17px;
+            line-height: 1.7;
+        }
+
+        /* =========================
+           CREATE CARD
+        ========================= */
+
+        .create-card {
+            width: 100%;
+
+            padding: 28px;
+
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 22px;
+
+            background:
+                rgba(255,255,255,0.035);
+
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+
+            box-shadow:
+                0 30px 80px rgba(0,0,0,0.35);
+
+            text-align: left;
+        }
+
+        .field {
+            margin-bottom: 16px;
+        }
+
+        .field label {
+            display: block;
+
+            margin-bottom: 8px;
+
+            color: #d4d4d8;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .field input,
+        .field textarea {
+            width: 100%;
+
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 12px;
+
+            background: rgba(0,0,0,0.25);
+
+            color: #ffffff;
+
+            padding: 13px 14px;
+
+            outline: none;
+
+            font-family: inherit;
+            font-size: 14px;
+
+            transition:
+                border-color 0.2s ease,
+                background 0.2s ease;
+        }
+
+        .field input:focus,
+        .field textarea:focus {
+            border-color: rgba(139,92,246,0.7);
+            background: rgba(0,0,0,0.35);
+        }
+
+        .field textarea {
+            min-height: 90px;
+            resize: vertical;
+        }
+
+        .field input::placeholder,
+        .field textarea::placeholder {
+            color: #52525b;
+        }
+
+        .generate-button {
+            width: 100%;
+
+            margin-top: 8px;
+
+            border: none;
+            border-radius: 12px;
+
+            padding: 14px 18px;
+
+            background: #8b5cf6;
+            color: #ffffff;
+
+            font-size: 14px;
+            font-weight: 700;
+
+            cursor: pointer;
+
+            transition:
+                transform 0.15s ease,
+                background 0.2s ease,
+                opacity 0.2s ease;
+        }
+
+        .generate-button:hover {
+            background: #7c3aed;
+            transform: translateY(-1px);
+        }
+
+        .generate-button:active {
+            transform: translateY(0);
+        }
+
+        .generate-button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .error-message {
+            display: none;
+
+            margin-top: 14px;
+
+            padding: 11px 13px;
+
+            border-radius: 10px;
+
+            background: rgba(239,68,68,0.1);
+            border: 1px solid rgba(239,68,68,0.2);
+
+            color: #fca5a5;
+
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        /* =========================
+           FOOTER
+        ========================= */
+
+        .footer {
+            padding: 24px;
+
+            text-align: center;
+
+            color: #52525b;
+            font-size: 12px;
+        }
+
+        /* =========================
+           RESPONSIVE
+        ========================= */
+
+        @media (max-width: 600px) {
+
+            .navbar {
+                padding: 20px;
+            }
+
+            .hero {
+                padding:
+                    40px 16px
+                    70px;
+            }
+
+            h1 {
+                letter-spacing: -2.5px;
+            }
+
+            .subtitle {
+                font-size: 15px;
+            }
+
+            .create-card {
+                padding: 20px;
+                border-radius: 18px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- =========================
+         NAVBAR
+    ========================= -->
+
+    <nav class="navbar">
+
+        <div class="logo">
+            Chat<span>Room</span>
+        </div>
+
+        <a
+            href="https://github.com/mortisnew"
+            class="nav-link"
+            target="_blank"
+            rel="noopener noreferrer"
+        >
+            GitHub
+        </a>
+
+    </nav>
+
+
+    <!-- =========================
+         HERO
+    ========================= -->
+
+    <main class="hero">
+
+        <div class="hero-content">
+
+            <div class="badge">
+                <span class="badge-dot"></span>
+                Temporary anonymous chat
+            </div>
+
+
+            <h1>
+                Talk freely.<br>
+                <span>Leave no trace.</span>
+            </h1>
+
+
+            <p class="subtitle">
+                Create a temporary anonymous room,
+                share the link, and start talking.
+                No account required.
+            </p>
+
+
+            <!-- =========================
+                 CREATE ROOM
+            ========================= -->
+
+            <div class="create-card">
+
+                <div class="field">
+
+                    <label for="title">
+                        Room title
+                    </label>
+
+                    <input
+                        id="title"
+                        type="text"
+                        maxlength="100"
+                        placeholder="e.g. Weekend plans"
+                        autocomplete="off"
+                    >
+
+                </div>
+
+
+                <div class="field">
+
+                    <label for="description">
+                        Description
+                    </label>
+
+                    <textarea
+                        id="description"
+                        maxlength="2000"
+                        placeholder="What is this room about?"
+                    ></textarea>
+
+                </div>
+
+
+                <button
+                    id="generateButton"
+                    class="generate-button"
+                    type="button"
+                >
+                    Generate Room
+                </button>
+
+
+                <div
+                    id="errorMessage"
+                    class="error-message"
+                ></div>
+
+            </div>
+
+        </div>
+
+    </main>
+
+
+    <footer class="footer">
+        Rooms are temporary and automatically expire.
+    </footer>
+
+
+    <script>
+
+        const titleInput =
+            document.getElementById("title");
+
+        const descriptionInput =
+            document.getElementById("description");
+
+        const generateButton =
+            document.getElementById("generateButton");
+
+        const errorMessage =
+            document.getElementById("errorMessage");
+
+
+        /*
+         * =========================
+         * CSRF
+         * =========================
+         */
+
+        function getCookie(name) {
+
+            const cookies =
+                document.cookie.split(";");
+
+            for (const cookie of cookies) {
+
+                const trimmed =
+                    cookie.trim();
+
+                if (
+                    trimmed.startsWith(
+                        name + "="
+                    )
+                ) {
+
+                    return decodeURIComponent(
+                        trimmed.substring(
+                            name.length + 1
+                        )
+                    );
+                }
+            }
+
+            return null;
+        }
+
+
+        /*
+         * =========================
+         * ERROR
+         * =========================
+         */
+
+        function showError(message) {
+
+            errorMessage.textContent =
+                message;
+
+            errorMessage.style.display =
+                "block";
+        }
+
+
+        function hideError() {
+
+            errorMessage.textContent =
+                "";
+
+            errorMessage.style.display =
+                "none";
+        }
+
+
+        /*
+         * =========================
+         * CREATE ROOM
+         * =========================
+         */
+
+        async function createRoom() {
+
+            hideError();
+
+            const title =
+                titleInput.value.trim();
+
+            const description =
+                descriptionInput.value.trim();
+
+
+            if (!title) {
+
+                showError(
+                    "Please enter a room title."
+                );
+
+                titleInput.focus();
+
+                return;
+            }
+
+
+            generateButton.disabled =
+                true;
+
+            generateButton.textContent =
+                "Creating...";
+
+
+            try {
+
+                const response =
+                    await fetch(
+                        "/api/chat/",
+                        {
+                            method: "POST",
+
+                            headers: {
+                                "Content-Type":
+                                    "application/json",
+
+                                "X-CSRFToken":
+                                    getCookie(
+                                        "csrftoken"
+                                    )
+                            },
+
+                            credentials: "same-origin",
+
+                            body: JSON.stringify({
+                                title: title,
+                                description:
+                                    description
+                            })
+                        }
+                    );
+
+
+                let data = null;
+
+                try {
+
+                    data =
+                        await response.json();
+
+                } catch (error) {
+
+                    data = null;
+                }
+
+
+                if (!response.ok) {
+
+                    if (
+                        data &&
+                        typeof data === "object"
+                    ) {
+
+                        const firstError =
+                            Object.values(data)
+                                .flat()
+                                .find(
+                                    value =>
+                                        typeof value ===
+                                        "string"
+                                );
+
+                        showError(
+                            firstError ||
+                            "Could not create the room."
+                        );
+
+                    } else {
+
+                        showError(
+                            "Could not create the room."
+                        );
+                    }
+
+                    return;
+                }
+
+
+                /*
+                 * The backend returns:
+                 *
+                 * {
+                 *     id,
+                 *     title,
+                 *     room_code,
+                 *     ...
+                 * }
+                 */
+
+                if (!data || !data.room_code) {
+
+                    showError(
+                        "Room was created, but no room code was returned."
+                    );
+
+                    return;
+                }
+
+
+                /*
+                 * IMPORTANT:
+                 *
+                 * Use the REAL room_code returned
+                 * by ChatViewSet.
+                 *
+                 * This connects Home directly
+                 * to the current Room page.
+                 */
+
+                window.location.href =
+                    `/room/${encodeURIComponent(
+                        data.room_code
+                    )}/`;
+
+            } catch (error) {
+
+                console.error(
+                    "CREATE ROOM ERROR:",
+                    error
+                );
+
+                showError(
+                    "Could not connect to the server."
+                );
+
+            } finally {
+
+                generateButton.disabled =
+                    false;
+
+                generateButton.textContent =
+                    "Generate Room";
+            }
+        }
+
+
+        /*
+         * =========================
+         * EVENTS
+         * =========================
+         */
+
+        generateButton.addEventListener(
+            "click",
+            createRoom
+        );
+
+
+        titleInput.addEventListener(
+            "keydown",
+            event => {
+
+                if (
+                    event.key === "Enter"
+                ) {
+
+                    event.preventDefault();
+
+                    createRoom();
+                }
+            }
+        );
+
+    </script>
+
+</body>
+</html>
+
